@@ -21,6 +21,13 @@
 @property UIDynamicItemBehavior *ballDynamicBehavior;
 @property UIDynamicItemBehavior *blockViewDynamicBehavior;
 @property (strong, nonatomic) IBOutlet BlockView *blockView;
+@property NSMutableArray *blocks;
+@property (strong, nonatomic) IBOutlet BlockView *blockView2;
+@property (strong, nonatomic) IBOutlet BlockView *blockView3;
+@property (strong, nonatomic) IBOutlet BlockView *blockView4;
+@property (strong, nonatomic) IBOutlet BlockView *blockView5;
+@property (strong, nonatomic) IBOutlet BlockView *blockView6;
+@property (strong, nonatomic) IBOutlet BlockView *blockView7;
 @end
 
 @implementation ViewController
@@ -32,10 +39,10 @@
     self.pushBehavior = [[UIPushBehavior alloc] initWithItems:@[self.ballView] mode:UIPushBehaviorModeInstantaneous];
     self.pushBehavior.pushDirection = CGVectorMake(0.5,1.0);
     self.pushBehavior.active = YES;
-    self.pushBehavior.magnitude = 0.2;
+    self.pushBehavior.magnitude = 0.1;
     [self.dynamicAnimator addBehavior:self.pushBehavior];
 
-    self.collisionBehavior = [[UICollisionBehavior alloc] initWithItems:@[self.ballView, self.paddleView, self.blockView]];
+    self.collisionBehavior = [[UICollisionBehavior alloc] initWithItems:@[self.ballView, self.paddleView, self.blockView, self.blockView2, self.blockView3, self.blockView4, self.blockView5, self.blockView6, self.blockView7]];
     self.collisionBehavior.collisionMode = UICollisionBehaviorModeEverything;
     self.collisionBehavior.translatesReferenceBoundsIntoBoundary = YES;
     self.collisionBehavior.collisionDelegate = self;
@@ -53,7 +60,7 @@
     self.ballDynamicBehavior.resistance = 0.0;
     [self.dynamicAnimator addBehavior:self.ballDynamicBehavior];
 
-    self.blockViewDynamicBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.blockView]];
+    self.blockViewDynamicBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.blockView, self.blockView2, self.blockView3, self.blockView4, self.blockView5, self.blockView6, self.blockView7]];
     self.blockViewDynamicBehavior.allowsRotation = NO;
     self.blockViewDynamicBehavior.density = 1000;
     [self.dynamicAnimator addBehavior:self.blockViewDynamicBehavior];
@@ -73,9 +80,22 @@
 }
     [self.dynamicAnimator updateItemUsingCurrentState:self.ballView];
 }
--(void) collisionBehavior:(UICollisionBehavior *)behavior beganContactForItem:(id<UIDynamicItem>)item1 withItem:(id<UIDynamicItem>)item2 atPoint:(CGPoint)p;
+-(void)collisionBehavior:(UICollisionBehavior *)behavior endedContactForItem:(id<UIDynamicItem>)item1 withItem:(id<UIDynamicItem>)item2
 {
-
+    //BlockView* block =  (BlockView*)item2;
+    if ([item2 isKindOfClass:[BlockView class]])
+    {
+        [UIView animateWithDuration:0.0 animations:^{
+            //block.backgroundColor = [UIColor orangeColor];
+            //NSLog(@"animating");
+        } completion:^(BOOL finished) {
+            //[(BlockView*)item2 setBackgroundColor:[UIColor orangeColor]];
+            [self.collisionBehavior removeItem:item2];
+            [self.blocks removeObject:(BlockView*)item2];
+            //you can only remove a view from itʻs Superview
+            [(BlockView*)item2 removeFromSuperview];
+            [self.dynamicAnimator updateItemUsingCurrentState:item2];}];
+        
+    }
 }
-
 @end
